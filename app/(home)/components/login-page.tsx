@@ -9,7 +9,7 @@ interface LoginPageProps {
 
 export default function LoginPage({ handleLogInClick }: LoginPageProps) {
   return (
-    <div className="flex h-screen items-center justify-center gap-20 p-5">
+    <div className="flex h-screen w-full items-center justify-center gap-20 p-5">
       <div className="hidden lg:flex">
         <Image
           src="/test.png"
