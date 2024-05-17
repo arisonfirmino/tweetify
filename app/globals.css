@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --background: #54e1ff;
+}
+
 .satisfy {
   font-family: "Satisfy", cursive;
 }
