@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import User from "./user";
 
 const schema = yup.object({
   text: yup.string().required("Este campo é obrigatório."),
@@ -34,25 +34,12 @@ export default function Form({ image, name }: FormProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 100 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, scale: 0.2 }}
+      animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
       className="flex flex-col gap-2.5 rounded-3xl bg-gray-200 p-2.5"
     >
-      <div className="flex items-center gap-2.5">
-        <Image
-          src={image}
-          alt={name}
-          height={330}
-          width={330}
-          className="h-10 w-10 rounded-full"
-        />
-
-        <div className="flex flex-col">
-          <h3 className="text-base font-medium">{name}</h3>
-          <p className="text-xs text-gray-500">@{username}</p>
-        </div>
-      </div>
+      <User name={name} username={username} image={image} />
 
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -69,7 +56,7 @@ export default function Form({ image, name }: FormProps) {
           <p className="w-full text-xs text-red-600">{errors.text.message}</p>
         )}
 
-        <button className="bg-background rounded-full px-5 py-1.5 text-white active:bg-gray-400">
+        <button className="rounded-full bg-background px-5 py-1.5 text-white active:bg-gray-400">
           Publicar
         </button>
       </form>
