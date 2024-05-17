@@ -9,8 +9,6 @@ export default function Home() {
   const { data } = useSession();
   const handleLogInClick = () => signIn("google");
 
-  console.log(data);
-
   return (
     <Container>
       {data?.user ? (

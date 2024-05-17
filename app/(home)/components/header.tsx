@@ -4,9 +4,10 @@ import Image from "next/image";
 interface HeaderProps {
   image: string;
   name: string;
+  setShowForm: () => void;
 }
 
-export default function Header({ image, name }: HeaderProps) {
+export default function Header({ image, name, setShowForm }: HeaderProps) {
   return (
     <header className="flex items-center justify-between">
       <Image
@@ -25,7 +26,10 @@ export default function Header({ image, name }: HeaderProps) {
         className="w-12"
       />
 
-      <button className="bg-background flex h-10 w-10 items-center justify-center rounded-full text-white">
+      <button
+        onClick={setShowForm}
+        className="bg-background flex h-10 w-10 items-center justify-center rounded-full text-white active:bg-gray-400"
+      >
         <LuPlus size={20} />
       </button>
     </header>
