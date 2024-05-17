@@ -3,7 +3,11 @@ import { SiApple } from "react-icons/si";
 import { FaRegCopyright } from "react-icons/fa6";
 import Image from "next/image";
 
-export default function LoginPage() {
+interface LoginPageProps {
+  handleLogInClick: () => void;
+}
+
+export default function LoginPage({ handleLogInClick }: LoginPageProps) {
   return (
     <div className="flex h-screen items-center justify-center gap-20 p-5">
       <div className="hidden lg:flex">
@@ -22,7 +26,10 @@ export default function LoginPage() {
         </h1>
 
         <div className="flex w-full flex-col items-center gap-2.5">
-          <button className="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-200 p-2.5 text-lg active:bg-gray-300">
+          <button
+            onClick={handleLogInClick}
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-200 p-2.5 text-lg active:bg-gray-300"
+          >
             <FcGoogle size={20} /> Sign in with Google
           </button>
 
