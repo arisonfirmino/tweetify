@@ -12,9 +12,9 @@ export default function ActionButtons({ likes, comments }: ActionButtonsProps) {
         <LuStar /> {likes}
       </button>
 
-      <button className="flex items-center gap-1 text-gray-400">
+      <div className="flex items-center gap-1 text-gray-400">
         <LuMessageCircle /> {comments}
-      </button>
+      </div>
 
       <button className="text-gray-400">
         <LuShare2 />

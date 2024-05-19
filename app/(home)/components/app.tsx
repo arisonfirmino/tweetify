@@ -5,6 +5,7 @@ import Header from "./header";
 import Search from "./search";
 import axios from "axios";
 import Tweet from "./tweet";
+import Link from "next/link";
 
 export interface AppProps {
   image: string;
@@ -67,7 +68,9 @@ export default function App({ image, name }: AppProps) {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: index * 0.3 }}
             >
-              <Tweet tweet={tweet} />
+              <Link href={`/comments/${tweet.id}`}>
+                <Tweet tweet={tweet} />
+              </Link>
             </motion.div>
           ))}
       </div>
