@@ -5,6 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { motion } from "framer-motion";
 import User from "./user";
+import { FormData } from "./app";
 
 const schema = yup.object({
   text: yup.string().required("Este campo é obrigatório."),
@@ -13,9 +14,10 @@ const schema = yup.object({
 interface FormProps {
   name: string;
   image: string;
+  submitForm: (data: FormData) => void;
 }
 
-export default function Form({ image, name }: FormProps) {
+export default function Form({ image, name, submitForm }: FormProps) {
   const username = name.toLowerCase().replace(/\s/g, "");
 
   const {
@@ -27,8 +29,15 @@ export default function Form({ image, name }: FormProps) {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit = (data: { text: string }) => {
+    const formData = {
+      name,
+      username,
+      imageUrl: image,
+      text: data.text,
+    };
+
+    submitForm(formData);
     reset();
   };
 

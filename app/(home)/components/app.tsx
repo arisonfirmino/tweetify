@@ -22,6 +22,13 @@ export interface Tweet {
   created_at: string;
 }
 
+export interface FormData {
+  name: string;
+  username: string;
+  imageUrl: string;
+  text: string;
+}
+
 export default function App({ image, name }: AppProps) {
   const [showForm, setShowForm] = useState(false);
   const [tweets, setTweets] = useState<Tweet[]>([]);
@@ -37,6 +44,16 @@ export default function App({ image, name }: AppProps) {
     findTweets();
   }, []);
 
+  const updateTweets = async () => {
+    const response = await axios.get("https://api-tweetify.onrender.com/tweet");
+    setTweets(response.data);
+  };
+
+  const submitForm = async (data: FormData) => {
+    await axios.post("https://api-tweetify.onrender.com/tweet", data);
+    updateTweets();
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col gap-5 border-solid border-black border-opacity-20 px-5 pt-2.5 md:max-w-[600px] md:border-x">
       <Search />
@@ -46,7 +63,7 @@ export default function App({ image, name }: AppProps) {
         setShowForm={() => setShowForm(!showForm)}
       />
 
-      {showForm && <Form name={name} image={image} />}
+      {showForm && <Form name={name} image={image} submitForm={submitForm} />}
 
       <div className="flex items-center gap-5">
         <button className="w-full rounded-xl bg-background px-5 py-1.5 text-white">
