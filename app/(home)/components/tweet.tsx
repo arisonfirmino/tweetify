@@ -29,6 +29,7 @@ export default function Tweet({ tweet }: TweetProps) {
       <p className="text-base">{tweet.text}</p>
 
       <ActionButtons
+        id={tweet.id}
         likes={tweet.likes}
         comments={tweet.comments.length ?? 0}
       />
