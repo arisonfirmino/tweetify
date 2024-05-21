@@ -5,10 +5,12 @@ import { useParams } from "next/navigation";
 import Container from "@/app/components/container";
 import axios from "axios";
 import Tweet from "@/app/(home)/components/tweet";
-import User from "@/app/(home)/components/user";
-import { LuArrowLeft, LuDot } from "react-icons/lu";
-import formatCreatedAt from "@/app/formatCreatedAt";
+import { LuArrowLeft } from "react-icons/lu";
 import Link from "next/link";
+import AddComment from "@/app/components/add-comment";
+import { FormData } from "@/app/(home)/components/app";
+import Comment from "@/app/(home)/components/comment";
+import { motion } from "framer-motion";
 
 interface Tweet {
   id: string;
@@ -48,9 +50,21 @@ export default function CommentPage() {
     findTweet();
   }, [id]);
 
+  const updateComments = async () => {
+    const response = await axios.get(
+      `https://api-tweetify.onrender.com/tweet/${id}`,
+    );
+    setComments(response.data.comments);
+  };
+
+  const submitForm = async (data: FormData) => {
+    await axios.post(`https://api-tweetify.onrender.com/comment/${id}`, data);
+    updateComments();
+  };
+
   return (
     <Container>
-      <div className="flex min-h-screen w-full flex-col gap-2.5 border-solid border-black border-opacity-20 px-5 pt-2.5 md:max-w-[600px] md:border-x">
+      <div className="relative flex min-h-screen w-full flex-col gap-2.5 border-solid border-black border-opacity-20 px-5 pb-20 pt-2.5 md:max-w-[600px] md:border-x">
         <div className="relative flex items-center justify-center gap-2 pb-3.5 text-lg font-bold">
           <Link href="/" className="absolute left-0 active:text-gray-400">
             <LuArrowLeft />
@@ -63,29 +77,24 @@ export default function CommentPage() {
         {comments
           .slice()
           .reverse()
-          .map((comment) => (
-            <div
+          .map((comment, index) => (
+            <motion.div
               key={comment.id}
-              className="flex flex-col gap-2.5 rounded-xl p-2 xl:duration-500 xl:hover:bg-gray-200"
+              initial={{ opacity: 0, scale: 0.2 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: index * 0.3 }}
             >
-              <div className="flex items-start">
-                <User
-                  name={comment.name}
-                  username={comment.username}
-                  image={comment.imageUrl}
-                />
-
-                <p className="mt-1 flex items-center text-gray-400">
-                  <LuDot />
-                  <span className="text-xs">
-                    há {formatCreatedAt(comment.created_at)}
-                  </span>
-                </p>
-              </div>
-
-              <p>{comment.text}</p>
-            </div>
+              <Comment
+                name={comment.name}
+                username={comment.username}
+                image={comment.imageUrl}
+                text={comment.text}
+                created_at={comment.created_at}
+              />
+            </motion.div>
           ))}
+
+        <AddComment submitForm={submitForm} />
       </div>
     </Container>
   );
