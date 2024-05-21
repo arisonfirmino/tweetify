@@ -30,6 +30,8 @@ export default function Tweet({ tweet }: TweetProps) {
 
       <ActionButtons
         id={tweet.id}
+        name={tweet.name}
+        text={tweet.text}
         likes={tweet.likes}
         comments={tweet.comments.length ?? 0}
       />
