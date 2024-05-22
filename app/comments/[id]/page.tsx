@@ -37,6 +37,9 @@ export default function CommentPage() {
 
   const [tweet, setTweet] = useState<Tweet | null>(null);
   const [comments, setComments] = useState<Comments[]>([]);
+  const [lastAddedCommentId, setLastAddedCommentId] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     const findTweet = async () => {
@@ -50,6 +53,16 @@ export default function CommentPage() {
     findTweet();
   }, [id]);
 
+  useEffect(() => {
+    if (lastAddedCommentId) {
+      const timer = setTimeout(() => {
+        setLastAddedCommentId(null);
+      }, 10000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [lastAddedCommentId]);
+
   const updateComments = async () => {
     const response = await axios.get(
       `https://api-tweetify.onrender.com/tweet/${id}`,
@@ -58,7 +71,16 @@ export default function CommentPage() {
   };
 
   const submitForm = async (data: FormData) => {
-    await axios.post(`https://api-tweetify.onrender.com/comment/${id}`, data);
+    const response = await axios.post(
+      `https://api-tweetify.onrender.com/comment/${id}`,
+      data,
+    );
+    setLastAddedCommentId(response.data.id);
+    updateComments();
+  };
+
+  const deleteComment = async (id: string) => {
+    await axios.delete(`https://api-tweetify.onrender.com/comment/${id}`);
     updateComments();
   };
 
@@ -90,6 +112,8 @@ export default function CommentPage() {
                 image={comment.imageUrl}
                 text={comment.text}
                 created_at={comment.created_at}
+                showUndoButton={comment.id === lastAddedCommentId}
+                handleDelete={() => deleteComment(comment.id)}
               />
             </motion.div>
           ))}

@@ -32,6 +32,7 @@ export interface FormData {
 export default function App({ image, name }: AppProps) {
   const [showForm, setShowForm] = useState(false);
   const [tweets, setTweets] = useState<Tweet[]>([]);
+  const [lastAddedTweetId, setLastAddedTweetId] = useState<string | null>(null);
 
   useEffect(() => {
     const findTweets = async () => {
@@ -44,13 +45,32 @@ export default function App({ image, name }: AppProps) {
     findTweets();
   }, []);
 
+  useEffect(() => {
+    if (lastAddedTweetId) {
+      const timer = setTimeout(() => {
+        setLastAddedTweetId(null);
+      }, 10000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [lastAddedTweetId]);
+
   const updateTweets = async () => {
     const response = await axios.get("https://api-tweetify.onrender.com/tweet");
     setTweets(response.data);
   };
 
   const submitForm = async (data: FormData) => {
-    await axios.post("https://api-tweetify.onrender.com/tweet", data);
+    const response = await axios.post(
+      "https://api-tweetify.onrender.com/tweet",
+      data,
+    );
+    setLastAddedTweetId(response.data.id);
+    updateTweets();
+  };
+
+  const deleteTweet = async (id: string) => {
+    await axios.delete(`https://api-tweetify.onrender.com/tweet/${id}`);
     updateTweets();
   };
 
@@ -84,7 +104,11 @@ export default function App({ image, name }: AppProps) {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: index * 0.3 }}
             >
-              <Tweet tweet={tweet} />
+              <Tweet
+                tweet={tweet}
+                showUndoButton={tweet.id === lastAddedTweetId}
+                handleDelete={() => deleteTweet(tweet.id)}
+              />
             </motion.div>
           ))}
       </div>

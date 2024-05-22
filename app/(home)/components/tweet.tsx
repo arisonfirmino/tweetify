@@ -3,14 +3,21 @@ import { LuDot } from "react-icons/lu";
 import User from "./user";
 import formatCreatedAt from "@/app/formatCreatedAt";
 import ActionButtons from "./action-buttons";
+import UndoButton from "@/app/components/undo-button";
 
 interface TweetProps {
   tweet: TweetTypes;
+  showUndoButton?: boolean;
+  handleDelete?: () => void;
 }
 
-export default function Tweet({ tweet }: TweetProps) {
+export default function Tweet({
+  tweet,
+  showUndoButton,
+  handleDelete = () => {},
+}: TweetProps) {
   return (
-    <div className="flex flex-col gap-2.5 border-b border-solid border-black border-opacity-20 pb-2.5">
+    <div className="relative flex flex-col gap-2.5 border-b border-solid border-black border-opacity-20 pb-2.5">
       <div className="flex items-start">
         <User
           name={tweet.name}
@@ -35,6 +42,8 @@ export default function Tweet({ tweet }: TweetProps) {
         likes={tweet.likes}
         comments={tweet.comments.length ?? 0}
       />
+
+      {showUndoButton && <UndoButton handleDelete={handleDelete} />}
     </div>
   );
 }
