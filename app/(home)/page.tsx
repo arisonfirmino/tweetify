@@ -2,8 +2,8 @@
 
 import { signIn, useSession } from "next-auth/react";
 import Container from "../components/container";
-import LoginPage from "./components/login-page";
-import App from "./components/app";
+import LoginPage from "../components/login-page";
+import App from "../components/app";
 
 export default function Home() {
   const { data } = useSession();

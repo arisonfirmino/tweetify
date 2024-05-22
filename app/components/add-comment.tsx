@@ -3,8 +3,8 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { LuSendHorizonal } from "react-icons/lu";
-import { FormData } from "../(home)/components/app";
+import { LuArrowUp } from "react-icons/lu";
+import { FormData } from "./app";
 import { useSession } from "next-auth/react";
 
 const schema = yup.object({
@@ -58,9 +58,9 @@ export default function AddComment({ submitForm }: AddCommentProps) {
           className="w-full bg-transparent p-2.5 outline-none"
         />
         <button
-          className={`flex items-center justify-center rounded-full px-2.5 py-1.5 active:bg-gray-400 ${errors.text ? "bg-red-600 text-white" : "bg-background"}`}
+          className={`flex items-center justify-center rounded-full p-1.5 active:bg-gray-400 ${errors.text ? "bg-red-600 text-white" : "bg-background text-[#3a4b5b]"}`}
         >
-          <LuSendHorizonal />
+          <LuArrowUp size={18} />
         </button>
       </div>
     </form>

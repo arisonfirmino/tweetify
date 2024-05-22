@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Container from "@/app/components/container";
 import axios from "axios";
-import Tweet from "@/app/(home)/components/tweet";
+import Tweet from "@/app/components/tweet";
 import { LuArrowLeft } from "react-icons/lu";
 import Link from "next/link";
 import AddComment from "@/app/components/add-comment";
-import { FormData } from "@/app/(home)/components/app";
-import Comment from "@/app/(home)/components/comment";
+import { FormData } from "@/app/components/app";
+import Comment from "@/app/components/comment";
 import { motion } from "framer-motion";
 
 interface Tweet {
