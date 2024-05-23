@@ -36,6 +36,7 @@ export default function App({ image, name }: AppProps) {
   const [tweets, setTweets] = useState<Tweet[]>([]);
   const [lastAddedTweetId, setLastAddedTweetId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showLikedTweets, setShowLikedTweets] = useState(false);
 
   useEffect(() => {
     const findTweets = async () => {
@@ -67,6 +68,13 @@ export default function App({ image, name }: AppProps) {
     tweet.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
+  const likedTweets = filteredTweets.filter((tweet) => {
+    const likedTweetsIds = JSON.parse(
+      localStorage.getItem("likedTweets") || "[]",
+    );
+    return likedTweetsIds.includes(tweet.id);
+  });
+
   const submitForm = async (data: FormData) => {
     const response = await axios.post(
       "https://api-tweetify.onrender.com/tweet",
@@ -93,15 +101,23 @@ export default function App({ image, name }: AppProps) {
       {showForm && <Form name={name} image={image} submitForm={submitForm} />}
 
       <div className="flex items-center gap-5">
-        <button className="w-full rounded-xl bg-background px-5 py-1.5 text-white">
+        <button
+          onClick={() => setShowLikedTweets(false)}
+          className={`w-full rounded-xl px-5 py-1.5 ${showLikedTweets === false ? "bg-background text-white" : "bg-transparent text-black"}`}
+        >
           Feed
         </button>
 
-        <button className="w-full rounded-xl px-5 py-1.5">Curtidos</button>
+        <button
+          onClick={() => setShowLikedTweets(true)}
+          className={`w-full rounded-xl px-5 py-1.5 ${showLikedTweets === true ? "bg-background text-white" : "bg-transparent text-black"}`}
+        >
+          Curtidos
+        </button>
       </div>
 
       <div className="flex flex-col gap-5">
-        {filteredTweets
+        {(showLikedTweets ? likedTweets : filteredTweets)
           .slice()
           .reverse()
           .map((tweet, index) => (
