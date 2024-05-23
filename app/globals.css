@@ -11,3 +11,13 @@
 .satisfy {
   font-family: "Satisfy", cursive;
 }
+
+::-webkit-scrollbar {
+  background: #ffffff;
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #54e1ff;
+  border-radius: 5px;
+}

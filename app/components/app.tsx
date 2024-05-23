@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Form from "./form";
@@ -33,6 +35,7 @@ export default function App({ image, name }: AppProps) {
   const [showForm, setShowForm] = useState(false);
   const [tweets, setTweets] = useState<Tweet[]>([]);
   const [lastAddedTweetId, setLastAddedTweetId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const findTweets = async () => {
@@ -60,6 +63,10 @@ export default function App({ image, name }: AppProps) {
     setTweets(response.data);
   };
 
+  const filteredTweets = tweets.filter((tweet) =>
+    tweet.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
   const submitForm = async (data: FormData) => {
     const response = await axios.post(
       "https://api-tweetify.onrender.com/tweet",
@@ -76,7 +83,7 @@ export default function App({ image, name }: AppProps) {
 
   return (
     <div className="flex min-h-screen w-full flex-col gap-5 border-solid border-black border-opacity-20 px-5 pt-2.5 md:max-w-[600px] md:border-x">
-      <Search />
+      <Search setSearchTerm={setSearchTerm} />
       <Header
         image={image}
         name={name}
@@ -94,7 +101,7 @@ export default function App({ image, name }: AppProps) {
       </div>
 
       <div className="flex flex-col gap-5">
-        {tweets
+        {filteredTweets
           .slice()
           .reverse()
           .map((tweet, index) => (
