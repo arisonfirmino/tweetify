@@ -12,10 +12,10 @@ export default function LoginPage({ handleLogInClick }: LoginPageProps) {
     <div className="flex h-screen w-full items-center justify-center gap-20 p-5">
       <div className="hidden lg:flex">
         <Image
-          src="/test.png"
+          src="/banner.png"
           alt="teste"
-          height={991}
-          width={600}
+          height={1105}
+          width={728}
           className="w-96"
         />
       </div>
@@ -35,7 +35,7 @@ export default function LoginPage({ handleLogInClick }: LoginPageProps) {
 
           <p>ou</p>
 
-          <button className="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-200 p-2.5 text-lg active:bg-gray-300">
+          <button className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-gray-200 p-2.5 text-lg active:bg-gray-300">
             <SiApple size={20} /> Sign in with Apple
           </button>
         </div>
