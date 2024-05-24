@@ -1,36 +1,27 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Tweetify
 
-## Getting Started
+Tweetify é uma aplicação simples de rede social onde os usuários podem postar “tweets” e visualizar “tweets” da comunidade.
 
-First, run the development server:
+👉 [acesse a aplicação](https://tweetify-kappa.vercel.app)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+![Preview](https://utfs.io/f/55ebf823-9be6-492a-b2ce-54faada9e98b-8u90el.png)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Tweetify é uma aplicação web desenvolvida utilizando *Next.js* e *TypeScript*, com inspiração no antigo Twitter (X). O principal objetivo é proporcionar aos usuários uma experiência similar à do Twitter, permitindo-lhes compartilhar seus pensamentos, opiniões e momentos com uma comunidade online.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+A aplicação oferece uma experiência interativa e intuitiva, projetada para facilitar o uso. Optei por integrar um sistema de login com o Google para garantir acesso rápido e seguro. Para interagir, os usuários podem usar suas contas do Google.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Após o login, os usuários têm um “perfil personalizado” com foto, nome e um tipo de “nickname”. Abaixo, há um campo de texto para fazer publicações, onde podem compartilhar o que desejam.
 
-## Learn More
+Como os dados do usuário do Google são apenas para vinculação, não implementei a exclusão de tweets específicos. Em vez disso, adicionei uma opção de 'Desfazer' após fazer uma publicação. Esse botão aparece por 10 segundos, permitindo que os usuários removam uma publicação recente.
 
-To learn more about Next.js, take a look at the following resources:
+Além disso, a aplicação permite aos usuários explorar tweets publicados por outros membros da comunidade, organizados em uma linha do tempo cronológica. A interação é fundamental, os usuários podem expressar suas opiniões e ideias através de comentários, estimulando discussões e trocas de ideias entre os membros da comunidade.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Oferecendo também a possibilidade de compartilhar tweets fora da plataforma, facilitando a disseminação de conteúdo e alcançando uma audiência mais ampla.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Experimente o Tweetify e faça parte dessa comunidade de compartilhamento e interação!
 
-## Deploy on Vercel
+## Backend
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Criei uma API responsável por adicionar novos tweets, adicionar comentários aos tweets publicados, listar tanto os tweets quanto os comentários associados a esses tweets, e também implementei a função de exclusão de um tweet. Utilizei o MongoDB como nosso banco de dados principal para armazenar os tweets e os comentários associados a eles.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Você pode conferir o código do backend [aqui](https://github.com/arisonfirmino/api-tweetify)
