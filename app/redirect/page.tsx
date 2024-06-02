@@ -20,7 +20,7 @@ export default function Redirect() {
         <p>
           clique{" "}
           <a
-            href="/"
+            href="https://tweetify-kappa.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-700 underline active:text-gray-400"
