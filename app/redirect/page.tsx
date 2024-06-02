@@ -1,32 +1,27 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { FaRegCopyright } from "react-icons/fa6";
+import { LuCopy } from "react-icons/lu";
 
 export default function Redirect() {
-  useEffect(() => {
-    const handleLinkClick = (event: MouseEvent) => {
-      event.preventDefault();
-      const url = (event.target as HTMLAnchorElement).href;
-      window.open(url, "_blank", "noopener,noreferrer");
-    };
+  const [copied, setCopied] = useState(false);
 
-    const link = document.getElementById("external-link");
-    if (link) {
-      link.addEventListener("click", handleLinkClick);
-    }
-
-    return () => {
-      if (link) {
-        link.removeEventListener("click", handleLinkClick);
-      }
-    };
-  }, []);
+  const copyToClipboard = () => {
+    const url = "https://tweetify-kappa.vercel.app";
+    navigator.clipboard.writeText(url).then(() => {
+      console.log("Link copied to clipboard:", url);
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, 5000);
+    });
+  };
 
   return (
-    <div className="relative flex h-screen w-full flex-col items-center justify-center">
-      <div className="flex flex-col items-center gap-5 rounded border border-solid border-black border-opacity-20 px-10 py-5">
+    <div className="relative flex h-screen w-full flex-col items-center justify-center p-10">
+      <div className="flex w-full flex-col items-center gap-5 rounded border border-solid border-black border-opacity-20 px-10 py-5 xl:max-w-[600px]">
         <Image
           src="/logo.png"
           alt="Tweetify"
@@ -39,17 +34,26 @@ export default function Redirect() {
           Tweetify
         </h1>
 
-        <p>
-          clique{" "}
-          <a
-            id="external-link"
-            href="/"
-            className="text-blue-700 underline active:text-gray-400"
-          >
-            aqui
-          </a>{" "}
-          para acessar a aplicação
+        <p className="text-center">
+          Olá! Para garantir uma experiência de login suave e sem problemas,
+          recomendo acessar a aplicação usando um navegador externo.
         </p>
+
+        <p className="text-center">
+          Digite o seguinte URL na barra de endereços do navegador:
+        </p>
+
+        <div className="relative flex items-center justify-center gap-2.5 rounded border border-solid border-black border-opacity-20 px-2.5 py-1">
+          <p>tweetify-kappa.vercel.app</p>
+
+          <button onClick={copyToClipboard} className="active:text-gray-400">
+            <LuCopy size={16} />
+          </button>
+
+          {copied && (
+            <p className="absolute -top-5 text-sm text-gray-400">copiado</p>
+          )}
+        </div>
       </div>
 
       <p className="absolute bottom-0 left-1/2 mb-5 flex -translate-x-1/2 items-center gap-1 text-nowrap text-xs font-light text-gray-400">
