@@ -1,7 +1,29 @@
+"use client";
+
+import { useEffect } from "react";
 import Image from "next/image";
 import { FaRegCopyright } from "react-icons/fa6";
 
 export default function Redirect() {
+  useEffect(() => {
+    const handleLinkClick = (event: MouseEvent) => {
+      event.preventDefault();
+      const url = (event.target as HTMLAnchorElement).href;
+      window.open(url, "_blank", "noopener,noreferrer");
+    };
+
+    const link = document.getElementById("external-link");
+    if (link) {
+      link.addEventListener("click", handleLinkClick);
+    }
+
+    return () => {
+      if (link) {
+        link.removeEventListener("click", handleLinkClick);
+      }
+    };
+  }, []);
+
   return (
     <div className="relative flex h-screen w-full flex-col items-center justify-center">
       <div className="flex flex-col items-center gap-5 rounded border border-solid border-black border-opacity-20 px-10 py-5">
@@ -20,9 +42,8 @@ export default function Redirect() {
         <p>
           clique{" "}
           <a
-            href="https://tweetify-kappa.vercel.app"
-            target="_blank"
-            rel="noopener noreferrer"
+            id="external-link"
+            href="/"
             className="text-blue-700 underline active:text-gray-400"
           >
             aqui
