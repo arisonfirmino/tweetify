@@ -1,7 +1,10 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import axios from "axios";
 import { MessageCircleIcon, Share2Icon, ThumbsUpIcon } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 export default function ActionButtons({
   id,
@@ -16,12 +19,25 @@ export default function ActionButtons({
 }) {
   const pathname = usePathname();
 
+  const [likedPost, setLikedPost] = useState(() => {
+    const savedLike = localStorage.getItem(`liked_${id}`);
+    return savedLike ? JSON.parse(savedLike) : false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(`liked_${id}`, JSON.stringify(likedPost));
+  }, [id, likedPost]);
+
   const likePost = async () => {
-    await axios.post("https://api-tweetify.onrender.com/like", { postId: id }).then(() => {
-      if (findAllPosts) {
-        findAllPosts();
-      }
-    });
+    await axios
+      .post("https://api-tweetify.onrender.com/like", { postId: id })
+      .then(() => {
+        setLikedPost(true);
+
+        if (findAllPosts) {
+          findAllPosts();
+        }
+      });
   };
 
   return (
@@ -30,9 +46,14 @@ export default function ActionButtons({
     >
       <button
         onClick={likePost}
-        className="flex items-center gap-1.5 text-gray-400"
+        className={`flex items-center gap-1.5 text-gray-400 ${likedPost ? "pointer-events-none cursor-not-allowed" : ""}`}
       >
-        <ThumbsUpIcon size={16} /> {likes}
+        {likedPost ? (
+          <ThumbsUpIcon className="fill-background text-background" size={16} />
+        ) : (
+          <ThumbsUpIcon size={16} />
+        )}
+        {likes}
       </button>
 
       {pathname === `/comments/${id}` ? (
