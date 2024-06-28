@@ -1,32 +1,39 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { parseISO, format } from "date-fns";
 import Image from "next/image";
+import ActionButtons from "./action-buttons";
+import { parseISO, format } from "date-fns";
 import DeleteButton from "./delete-button";
 import { motion } from "framer-motion";
 
-interface CommentProps {
+interface PostProps {
   id: string;
   name: string;
   email: string;
-  imageUrl: string | undefined;
+  imageUrl: string | null;
   text: string;
+  likes: number;
+  comments: [];
   created_at: string;
   index?: number;
   handleClick?: (id: string) => void;
+  findAllPosts?: () => void;
 }
 
-export default function Comment({
+export default function Post({
   id,
   name,
   email,
   imageUrl,
   text,
+  likes,
+  comments,
   created_at,
-  index = 0,
   handleClick,
-}: CommentProps) {
+  index = 0,
+  findAllPosts,
+}: PostProps) {
   const { data } = useSession();
 
   const date = parseISO(created_at);
@@ -37,7 +44,7 @@ export default function Comment({
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: index * 0.3 }}
-      className="relative flex flex-col gap-2.5"
+      className="relative flex flex-col gap-2.5 rounded-xl bg-gray-100 p-2.5"
     >
       <div className="flex items-center gap-2.5">
         <Image
@@ -54,9 +61,16 @@ export default function Comment({
         </span>
       </div>
 
-      <p className="border-b border-solid border-gray-400 pb-2.5 text-sm">
+      <p className="border-y border-solid border-gray-400 py-2.5 text-sm">
         {text}
       </p>
+
+      <ActionButtons
+        id={id}
+        likes={likes}
+        comments={comments}
+        findAllPosts={findAllPosts}
+      />
 
       {data?.user?.email === email && (
         <DeleteButton id={id} handleClick={() => handleClick?.(id)} />

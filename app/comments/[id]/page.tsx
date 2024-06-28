@@ -1,125 +1,101 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Container from "@/app/components/container";
+import SepSession from "@/app/components/sep-session";
 import axios from "axios";
-import Tweet from "@/app/components/tweet";
-import { LuArrowLeft } from "react-icons/lu";
+import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
-import AddComment from "@/app/components/add-comment";
-import { FormData } from "@/app/components/app";
+import Post from "@/app/components/post";
+import { PostProps } from "@/app/components/app";
 import Comment from "@/app/components/comment";
-import { motion } from "framer-motion";
+import CommentForm from "@/app/components/comment-form";
 
-interface Tweet {
+interface CommentProps {
   id: string;
   name: string;
-  username: string;
-  imageUrl: string;
+  email: string;
+  imageUrl: string | undefined;
   text: string;
-  likes: number;
-  comments: [];
+  postId: string;
   created_at: string;
 }
 
-interface Comments {
-  id: string;
-  name: string;
-  username: string;
-  imageUrl: string;
-  text: string;
-  created_at: string;
-}
-
-export default function CommentPage() {
+export default function CommentsPage() {
   const { id } = useParams<{ id: string }>();
 
-  const [tweet, setTweet] = useState<Tweet | null>(null);
-  const [comments, setComments] = useState<Comments[]>([]);
-  const [lastAddedCommentId, setLastAddedCommentId] = useState<string | null>(
-    null,
-  );
+  const [post, setPost] = useState<PostProps | null>(null);
+  const [comments, setComments] = useState<CommentProps[]>([]);
 
-  useEffect(() => {
-    const findTweet = async () => {
-      const response = await axios.get(
-        `https://api-tweetify.onrender.com/tweet/${id}`,
-      );
-      setTweet(response.data);
+  const findPost = useCallback(async () => {
+    await axios.get(`https://api-tweetify.onrender.com/post?id=${id}`).then((response) => {
+      setPost(response.data);
       setComments(response.data.comments);
-    };
-
-    findTweet();
+    });
   }, [id]);
 
   useEffect(() => {
-    if (lastAddedCommentId) {
-      const timer = setTimeout(() => {
-        setLastAddedCommentId(null);
-      }, 10000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [lastAddedCommentId]);
-
-  const updateComments = async () => {
-    const response = await axios.get(
-      `https://api-tweetify.onrender.com/tweet/${id}`,
-    );
-    setComments(response.data.comments);
-  };
-
-  const submitForm = async (data: FormData) => {
-    const response = await axios.post(
-      `https://api-tweetify.onrender.com/comment/${id}`,
-      data,
-    );
-    setLastAddedCommentId(response.data.id);
-    updateComments();
-  };
+    findPost();
+  }, [findPost]);
 
   const deleteComment = async (id: string) => {
-    await axios.delete(`https://api-tweetify.onrender.com/comment/${id}`);
-    updateComments();
+    await axios.delete(`https://api-tweetify.onrender.com/comment?id=${id}`).then(() => {
+      if (findPost) {
+        findPost();
+      }
+    });
   };
 
   return (
     <Container>
-      <div className="relative flex min-h-screen w-full flex-col gap-2.5 border-solid border-black border-opacity-20 px-5 pb-20 pt-2.5 md:max-w-[600px] md:border-x">
-        <div className="relative flex items-center justify-center gap-2 pb-3.5 text-lg font-bold">
-          <Link href="/" className="absolute left-0 active:text-gray-400">
-            <LuArrowLeft />
+      <main className="flex min-h-screen w-full flex-col gap-5 border-solid border-gray-400 p-5 pb-[70px] md:max-w-[600px] md:border-x">
+        <SepSession>
+          <Link
+            href="/"
+            className="flex items-center gap-1 active:text-gray-300"
+          >
+            <ArrowLeftIcon size={14} />
+            Voltar
           </Link>
-          Publicação
-        </div>
+        </SepSession>
 
-        {tweet && <Tweet tweet={tweet} />}
+        {post && (
+          <Post
+            id={post.id}
+            name={post.name}
+            email={post.email}
+            imageUrl={post.imageUrl}
+            text={post.text}
+            likes={post.likes}
+            comments={post.comments}
+            created_at={post.created_at}
+          />
+        )}
 
-        {comments
-          .slice()
-          .reverse()
-          .map((comment, index) => (
-            <motion.div
-              key={comment.id}
-              initial={{ opacity: 0, scale: 0.2 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: index * 0.3 }}
-            >
+        <SepSession>Comentários</SepSession>
+
+        <div className="flex flex-col gap-5">
+          {comments
+            .slice()
+            .reverse()
+            .map((comment, index) => (
               <Comment
+                key={comment.id}
+                id={comment.id}
                 name={comment.name}
-                username={comment.username}
-                image={comment.imageUrl}
+                email={comment.email}
+                imageUrl={comment.imageUrl}
                 text={comment.text}
                 created_at={comment.created_at}
-                showUndoButton={comment.id === lastAddedCommentId}
-                handleDelete={() => deleteComment(comment.id)}
+                index={index}
+                handleClick={() => deleteComment(comment.id)}
               />
-            </motion.div>
-          ))}
+            ))}
+        </div>
 
-        <AddComment submitForm={submitForm} />
-      </div>
+        <CommentForm id={id} findPost={findPost} />
+      </main>
     </Container>
   );
 }

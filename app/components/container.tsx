@@ -4,7 +4,7 @@ interface ContainerProps {
 
 export default function Container({ children }: ContainerProps) {
   return (
-    <main className="flex min-h-screen w-full cursor-default flex-col items-center">
+    <main className="flex min-h-screen w-full flex-col items-center">
       {children}
     </main>
   );

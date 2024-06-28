@@ -1,93 +1,55 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import axios from "axios";
+import { MessageCircleIcon, Share2Icon, ThumbsUpIcon } from "lucide-react";
 import Link from "next/link";
-import { LuMessageCircle, LuShare2, LuThumbsUp } from "react-icons/lu";
-
-interface ActionButtonsProps {
-  id: string;
-  name: string;
-  text: string;
-  likes: number;
-  comments: number;
-}
+import { usePathname } from "next/navigation";
 
 export default function ActionButtons({
   id,
-  name,
-  text,
   likes,
   comments,
-}: ActionButtonsProps) {
-  const [like, setLike] = useState(false);
-  const [likeCount, setLikeCount] = useState(likes);
+  findAllPosts,
+}: {
+  id: string;
+  likes: number;
+  comments: [];
+  findAllPosts?: () => void;
+}) {
   const pathname = usePathname();
 
-  useEffect(() => {
-    const likedTweets = JSON.parse(localStorage.getItem("likedTweets") || "[]");
-    if (likedTweets.includes(id)) {
-      setLike(true);
-    }
-  }, [id]);
-
-  const handleLikeClick = async () => {
-    if (!like) {
-      await axios.post(`https://api-tweetify.onrender.com/tweet/${id}/like`);
-      setLike(true);
-      setLikeCount(likeCount + 1);
-
-      const likedTweets = JSON.parse(
-        localStorage.getItem("likedTweets") || "[]",
-      );
-      likedTweets.push(id);
-      localStorage.setItem("likedTweets", JSON.stringify(likedTweets));
-    }
-  };
-
-  const handleShareClick = () => {
-    if (navigator.share) {
-      const tweetUrl = `/comments/${id}`;
-      navigator.share({
-        title: document.title,
-        text: `Confira este tweet de ${name}: ${text}`,
-        url: tweetUrl,
-      });
-    }
+  const likePost = async () => {
+    await axios.post("https://api-tweetify.onrender.com/like", { postId: id }).then(() => {
+      if (findAllPosts) {
+        findAllPosts();
+      }
+    });
   };
 
   return (
-    <div className="flex w-full items-center justify-center gap-2.5">
+    <div
+      className={`flex items-center gap-2.5 text-base ${pathname === `/comments/${id}` ? "justify-start" : "justify-center"}`}
+    >
       <button
-        onClick={handleLikeClick}
-        disabled={like}
-        className={`flex items-center gap-1 text-gray-400 active:text-background ${like ? "cursor-not-allowed" : ""}`}
+        onClick={likePost}
+        className="flex items-center gap-1.5 text-gray-400"
       >
-        <LuThumbsUp
-          className={`${like ? "fill-background text-background" : ""}`}
-        />
-        {likeCount}
+        <ThumbsUpIcon size={16} /> {likes}
       </button>
 
       {pathname === `/comments/${id}` ? (
-        <div className="flex items-center gap-1 text-gray-400">
-          <LuMessageCircle /> {comments}
+        <div className="flex items-center gap-1.5 text-gray-400">
+          <MessageCircleIcon size={16} /> {comments.length}
         </div>
       ) : (
         <Link
           href={`/comments/${id}`}
-          className="flex items-center gap-1 text-gray-400 active:text-background"
+          className="flex items-center gap-1.5 text-gray-400 active:text-gray-300"
         >
-          <LuMessageCircle /> {comments}
+          <MessageCircleIcon size={16} /> {comments.length}
         </Link>
       )}
 
-      <button
-        onClick={handleShareClick}
-        className="text-gray-400 active:text-background"
-      >
-        <LuShare2 />
+      <button className="flex items-center gap-1.5 text-gray-400">
+        <Share2Icon size={16} />
       </button>
     </div>
   );

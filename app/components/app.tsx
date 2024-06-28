@@ -1,140 +1,76 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import Form from "./form";
-import Header from "./header";
+import Title from "./title";
 import Search from "./search";
+import Form from "./form";
+import SepSession from "./sep-session";
+import { ChevronDownIcon } from "lucide-react";
+import Post from "./post";
 import axios from "axios";
-import Tweet from "./tweet";
+import SignOutButton from "./signOut-button";
 
-export interface AppProps {
-  image: string;
-  name: string;
-}
-
-export interface Tweet {
+export interface PostProps {
   id: string;
   name: string;
-  username: string;
-  imageUrl: string;
+  email: string;
+  imageUrl: string | null;
   text: string;
   likes: number;
   comments: [];
   created_at: string;
 }
 
-export interface FormData {
-  name: string;
-  username: string;
-  imageUrl: string;
-  text: string;
-}
-
-export default function App({ image, name }: AppProps) {
-  const [showForm, setShowForm] = useState(false);
-  const [tweets, setTweets] = useState<Tweet[]>([]);
-  const [lastAddedTweetId, setLastAddedTweetId] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showLikedTweets, setShowLikedTweets] = useState(false);
+export default function App() {
+  const [posts, setPosts] = useState<PostProps[]>([]);
 
   useEffect(() => {
-    const findTweets = async () => {
-      const response = await axios.get(
-        "https://api-tweetify.onrender.com/tweet",
-      );
-      setTweets(response.data);
-    };
-
-    findTweets();
+    findAllPosts();
   }, []);
 
-  useEffect(() => {
-    if (lastAddedTweetId) {
-      const timer = setTimeout(() => {
-        setLastAddedTweetId(null);
-      }, 10000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [lastAddedTweetId]);
-
-  const updateTweets = async () => {
-    const response = await axios.get("https://api-tweetify.onrender.com/tweet");
-    setTweets(response.data);
+  const findAllPosts = async () => {
+    await axios.get("https://api-tweetify.onrender.com/posts").then((response) => {
+      setPosts(response.data);
+    });
   };
 
-  const filteredTweets = tweets.filter((tweet) =>
-    tweet.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
-
-  const likedTweets = filteredTweets.filter((tweet) => {
-    const likedTweetsIds = JSON.parse(
-      localStorage.getItem("likedTweets") || "[]",
-    );
-    return likedTweetsIds.includes(tweet.id);
-  });
-
-  const submitForm = async (data: FormData) => {
-    const response = await axios.post(
-      "https://api-tweetify.onrender.com/tweet",
-      data,
-    );
-    setLastAddedTweetId(response.data.id);
-    updateTweets();
-  };
-
-  const deleteTweet = async (id: string) => {
-    await axios.delete(`https://api-tweetify.onrender.com/tweet/${id}`);
-    updateTweets();
+  const deletePost = async (id: string) => {
+    await axios.delete(`https://api-tweetify.onrender.com/post?id=${id}`).then(() => {
+      if (findAllPosts) {
+        findAllPosts();
+      }
+    });
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col gap-5 border-solid border-black border-opacity-20 px-5 pt-2.5 md:max-w-[600px] md:border-x">
-      <Search setSearchTerm={setSearchTerm} />
-      <Header
-        image={image}
-        name={name}
-        setShowForm={() => setShowForm(!showForm)}
-      />
+    <main className="relative flex min-h-screen w-full flex-col gap-5 border-solid border-gray-400 p-5 md:max-w-[600px] md:border-x">
+      <SignOutButton />
+      <Title />
+      <Search />
+      <Form findAllPosts={findAllPosts} />
 
-      {showForm && <Form name={name} image={image} submitForm={submitForm} />}
-
-      <div className="flex items-center gap-5">
-        <button
-          onClick={() => setShowLikedTweets(false)}
-          className={`w-full rounded-xl px-5 py-1.5 ${showLikedTweets === false ? "bg-background text-white" : "bg-transparent text-black"}`}
-        >
-          Feed
-        </button>
-
-        <button
-          onClick={() => setShowLikedTweets(true)}
-          className={`w-full rounded-xl px-5 py-1.5 ${showLikedTweets === true ? "bg-background text-white" : "bg-transparent text-black"}`}
-        >
-          Curtidos
-        </button>
-      </div>
+      <SepSession>
+        Feed <ChevronDownIcon size={14} />
+      </SepSession>
 
       <div className="flex flex-col gap-5">
-        {(showLikedTweets ? likedTweets : filteredTweets)
-          .slice()
-          .reverse()
-          .map((tweet, index) => (
-            <motion.div
-              key={tweet.id}
-              initial={{ opacity: 0, scale: 0.2 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: index * 0.3 }}
-            >
-              <Tweet
-                tweet={tweet}
-                showUndoButton={tweet.id === lastAddedTweetId}
-                handleDelete={() => deleteTweet(tweet.id)}
-              />
-            </motion.div>
-          ))}
+        {posts.map((post, index) => (
+          <Post
+            key={post.id}
+            id={post.id}
+            name={post.name}
+            email={post.email}
+            imageUrl={post.imageUrl}
+            text={post.text}
+            likes={post.likes}
+            comments={post.comments}
+            created_at={post.created_at}
+            index={index}
+            handleClick={() => deletePost(post.id)}
+            findAllPosts={findAllPosts}
+          />
+        ))}
       </div>
-    </div>
+    </main>
   );
 }

@@ -2,7 +2,6 @@
 
 import { signIn, useSession } from "next-auth/react";
 import Container from "../components/container";
-import LoginPage from "../components/login-page";
 import App from "../components/app";
 
 export default function Home() {
@@ -12,9 +11,9 @@ export default function Home() {
   return (
     <Container>
       {data?.user ? (
-        <App image={data?.user.image ?? ""} name={data?.user.name ?? ""} />
+        <App />
       ) : (
-        <LoginPage handleLogInClick={handleLogInClick} />
+        <button onClick={handleLogInClick}>faça login</button>
       )}
     </Container>
   );
