@@ -8,11 +8,13 @@ import Link from "next/link";
 
 export default function ActionButtons({
   id,
+  name,
   likes,
   comments,
   findAllPosts,
 }: {
   id: string;
+  name: string;
   likes: number;
   comments: [];
   findAllPosts?: () => void;
@@ -38,6 +40,17 @@ export default function ActionButtons({
           findAllPosts();
         }
       });
+  };
+
+  const sharePost = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: `Confira essa publicação de ${name}`,
+        url: `https://tweetify-kappa.vercel.app/comments/${id}`,
+      });
+    } else {
+      alert("O recurso de compartilhamento não é suportado em seu navegador.");
+    }
   };
 
   return (
@@ -69,7 +82,10 @@ export default function ActionButtons({
         </Link>
       )}
 
-      <button className="flex items-center gap-1.5 text-gray-400">
+      <button
+        onClick={sharePost}
+        className="flex items-center gap-1.5 text-gray-400"
+      >
         <Share2Icon size={16} />
       </button>
     </div>

@@ -67,6 +67,7 @@ export default function Post({
 
       <ActionButtons
         id={id}
+        name={name}
         likes={likes}
         comments={comments}
         findAllPosts={findAllPosts}
