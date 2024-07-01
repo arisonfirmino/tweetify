@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Title from "./title";
 import Search from "./search";
 import Form from "./form";
@@ -23,30 +23,42 @@ export interface PostProps {
 
 export default function App() {
   const [posts, setPosts] = useState<PostProps[]>([]);
+  const [search, setSearch] = useState("");
+
+  const findAllPosts = useCallback(async () => {
+    await axios
+      .get("https://api-tweetify.onrender.com/posts")
+      .then((response) => {
+        const filteredPosts = response.data.filter((post: PostProps) =>
+          post.name.toLowerCase().includes(search.toLowerCase()),
+        );
+        setPosts(filteredPosts);
+      });
+  }, [search]);
 
   useEffect(() => {
     findAllPosts();
-  }, []);
-
-  const findAllPosts = async () => {
-    await axios.get("https://api-tweetify.onrender.com/posts").then((response) => {
-      setPosts(response.data);
-    });
-  };
+  }, [search, findAllPosts]);
 
   const deletePost = async (id: string) => {
-    await axios.delete(`https://api-tweetify.onrender.com/post?id=${id}`).then(() => {
-      if (findAllPosts) {
-        findAllPosts();
-      }
-    });
+    await axios
+      .delete(`https://api-tweetify.onrender.com/post?id=${id}`)
+      .then(() => {
+        if (findAllPosts) {
+          findAllPosts();
+        }
+      });
+  };
+
+  const handleSearch = (term: string) => {
+    setSearch(term);
   };
 
   return (
     <main className="relative flex min-h-screen w-full flex-col gap-5 border-solid border-gray-400 p-5 md:max-w-[600px] md:border-x">
       <SignOutButton />
       <Title />
-      <Search />
+      <Search handleSearch={handleSearch} />
       <Form findAllPosts={findAllPosts} />
 
       <SepSession>
